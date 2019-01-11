@@ -1,0 +1,20 @@
+-detect water from tif images
+ -UNN (unet neural net) for detecting water bodies
+     -Adam optimiser
+     -Relu activation
+     -512x512 input with 3 bands
+     -resulting a model that creates maks with water bodies
+     Network was trained using tensorflow-gpu, with requirements:
+     -GPU min Nvidia 1050 2GB (the batch size should be reduced it, for a weacker gpu)
+     -python 3.6.x
+     -anaconda
+     -nvidia Cuda
+     -CuDNN
+     -Nvidia Gpu Computing Toolkit
+     -tensorlow
+     -keras
+     -tensorflow-gpu
+-Java image processing:
+-detect water bodies from .tif images
+-class for creating maks for unet resulted from combining green wave_bands and NIF band .tif images, calculate NDIW(normalized  water index) NDWI per pixel = green - nif / green + nif , with  result >= 0.45 as water pixe;
+-class for creating subimages of 512x512 for UNet from Nif and masks, with 3 band RGB (without alpha!!)
