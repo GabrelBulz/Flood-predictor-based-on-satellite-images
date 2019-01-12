@@ -3,14 +3,14 @@
      -Adam optimiser
      -Relu activation
      -512x512 input with 3 bands
-     -resulting a model that creates maks with water bodies
+     -resulting a model that creates masks with water bodies
      Network was trained using tensorflow-gpu, with requirements:
-     -GPU min Nvidia 1050 2GB (the batch size should be reduced it, for a weacker gpu)
+     -GPU min Nvidia 1050 2GB (the batch size should be reduced it, for a weaker gpu)
      -python 3.6.x
      -anaconda
-     -nvidia Cuda
-     -CuDNN
+     -Cuda
      -Nvidia Gpu Computing Toolkit
+     -CuDNN
      -tensorlow
      -keras
      -tensorflow-gpu
