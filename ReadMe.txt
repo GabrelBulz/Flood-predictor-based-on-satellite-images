@@ -1,4 +1,4 @@
--detect water from tif images
+Detect water from tif images
  -UNN (unet neural net) for detecting water bodies
      -Adam optimiser
      -Relu activation
@@ -14,7 +14,14 @@
      -tensorlow
      -keras
      -tensorflow-gpu
--Java image processing:
--detect water bodies from .tif images
--class for creating masks for unet resulted from combining green wave_bands and NIF band .tif images, calculate NDIW(normalized  water index) NDWI per pixel = green - nif / green + nif , with  result >= 0.45 as water pixe;
--class for creating subimages of 512x512 for UNet from Nif and masks, with 3 band RGB (without alpha!!)
+    Java image processing:
+        -detect water bodies from .tif images
+        -class for creating masks for unet resulted from combining green wave_bands and NIF band .tif images, calculate NDIW(normalized  water index) NDWI per pixel = green - nif / green + nif , with  result >= 0.45 as water pixe;
+        -class for creating subimages of 512x512 for UNet from Nif and masks, with 3 band RGB (without alpha!!)
+
+        Java requirement:
+            -JDK 1.8.0 min
+            -update lib ImageIO to jai-imageio-core-1.4.0 min (included in proj)
+            -from Environment Variables set JVM memory to at least 4GB with:
+                _JAVA_OPTION - variable name
+                -Xmx4096m - variable value
