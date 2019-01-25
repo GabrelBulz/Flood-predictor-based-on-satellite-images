@@ -22,6 +22,12 @@ Detect water from tif images
         Java requirement:
             -JDK 1.8.0 min
             -update lib ImageIO to jai-imageio-core-1.4.0 min (included in proj)
+            -Gdal from python or http://download.gisinternals.com/sdk/downloads/release-1500-x64-gdal-2-2-3-mapserver-7-0-7/gdal-202-1500-x64-core.msi
+            -need to add gdal libraty to java and copy:
+                -gdalconstjni.dll
+                -gdaljni.dll
+                -ogrjni.dll
+                -osrjni.dll   into java\jdk1.8.x...\bin from programfiles\gdal
             -from Environment Variables set JVM memory to at least 4GB with:
                 _JAVA_OPTION - variable name
                 -Xmx4096m - variable value
