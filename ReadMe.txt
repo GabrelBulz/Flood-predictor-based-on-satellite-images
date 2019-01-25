@@ -19,7 +19,7 @@ Detect water from tif images
         -detect water bodies from .tif images
         -class for creating masks for unet resulted from combining green wave_bands and NIF band .tif images, calculate NDIW(normalized  water index) NDWI per pixel = green - nif / green + nif , with  result >= 0.45 as water pixe;
         -class for creating subimages of 512x512 for UNet from Nif and masks, with 3 band RGB (without alpha!!)
-        -class Make_difference takes an image which is not flooded and an image that is flooded and it makes an image that resambles the differences between the two
+        -class Make_difference takes an image which is not flooded and an image that is flooded and it makes an image that resembles the differences between the two
         -class CreateFloodMapBasedOnTOPO takes a nif image, the image resulted after the water detection algo is applied and the topographic image of that area (not necesarry layed perfectly over the nif image) because we use a method to identify areas based on the longitude, latitude coordinates
         
         Java requirement:
