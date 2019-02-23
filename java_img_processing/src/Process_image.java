@@ -1,20 +1,14 @@
-import com.sun.jmx.remote.internal.ClientNotifForwarder;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadFactory;
+
+import org.gdal.gdal.Dataset;
+import org.gdal.gdal.gdal;
+import org.gdal.gdalconst.*;
+import org.gdal.osr.CoordinateTransformation;
+import org.gdal.osr.SpatialReference;
 
 public class Process_image {
 
@@ -61,8 +55,8 @@ public class Process_image {
 
     public static void main(String []args) throws IOException {
 
-         String source_images = "D:\\proj_licenta\\set_images";
-         String out_processed_images = "D:\\proj_licenta\\set_images\\processed_images";
+         String source_images = "D:\\proj_licenta\\set_images_landsat";
+         String out_processed_images = "D:\\proj_licenta\\set_images_landsat\\processed_landsat";
 
 
          String path_source_images = "D:\\proj_licenta\\set_images";
@@ -71,22 +65,77 @@ public class Process_image {
          String out_splited_processed_images = "D:\\proj_licenta\\set_images\\processed_images_splited";
 
          ///just exclude the 3'rd image bad format
-//         WaterDerectorBasic w = new WaterDerectorBasic(source_images,21, out_processed_images);
-         Subimages_512 sub = new Subimages_512(21, path_source_images, out_splited_source_images, path_processed_images, out_splited_processed_images);
+//         WaterDerectorBasic w = new WaterDerectorBasic(source_images,8, out_processed_images);
+//         Subimages_512 sub = new Subimages_512(21, path_source_images, out_splited_source_images, path_processed_images, out_splited_processed_images);
+//        make_difference diff= new make_difference("D:\\proj_licenta\\set_images_landsat\\processed_landsat\\out3.png", "D:\\proj_licenta\\set_images_landsat\\processed_landsat\\out4.png");
 
 
-//        File f  = new File(out_splited_source_images + "\\0_0.png");
-//        BufferedImage bf = ImageIO.read(f);
+
+
+        String topo_path = "D:\\proj_licenta\\set_images_landsat\\merged_final_cairo_il.tif";
+        String nif_path = "D:\\proj_licenta\\set_images_landsat\\6_nif.tif";
+        String result_nif_path = "D:\\proj_licenta\\set_images_landsat\\processed_landsat\\6.png";
+//        File topo_file = new File(topo_string);
+//        BufferedImage img_topo = null;
 //
-//        BufferedImage newbuf = new BufferedImage(bf.getWidth(), bf.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
-//
-//        for (int i = 0; i < bf.getWidth(); i++) {
-//            for (int j = 0; j < bf.getHeight(); j++) {
-//                newbuf.setRGB(i, j, bf.getRGB(i, j));
-//            }
+//        try {
+//            img_topo = ImageIO.read(topo_file);
+//        }catch (IOException e){
+//            e.printStackTrace();
 //        }
 //
-//        ImageIO.write(newbuf, "png", new File(out_splited_source_images + "\\0_00.png"));
+//
+//        for (int i = 0; i < img_topo.getWidth(); i++) {
+//            for (int j = 0; j < img_topo.getHeight(); j++) {
+//                Color x = new Color(img_topo.getRGB(i ,j));
+//                System.out.println(new Integer(x.getRed()).toString() + " " + new Integer(x.getBlue()).toString() + " " + new Integer(x.getGreen()).toString());
+//            }
+//        }
+
+
+
+//        pixel to coordinates gdal ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        gdal.AllRegister();
+//
+//        File f = new File(topo_string);
+//
+//        System.out.println(f.exists());
+//
+//        Dataset ds = gdal.Open(topo_string, gdalconst.GA_ReadOnly);
+//
+//
+//        double[] transformation = ds.GetGeoTransform();
+//
+//
+//        System.out.println(transformation.length);
+//
+//        for (int i = 0; i < transformation.length; i++) {
+//            System.out.println(transformation[i]);
+//        }
+//
+//        double x = 0;
+//        double y = 0;
+//
+//        double rez_x = transformation[1]*x + transformation[2]*y + transformation[0];
+//        double rez_y = transformation[4]*x + transformation[5]*y + transformation[3];
+//
+//        System.out.println(rez_x);
+//        System.out.println(rez_y);
+//
+//        SpatialReference crs = new SpatialReference();
+//        crs.ImportFromWkt(ds.GetProjectionRef());
+//
+//        SpatialReference crsGeo = new SpatialReference();
+//
+//        crsGeo.ImportFromEPSG(4326);
+//        CoordinateTransformation t = new CoordinateTransformation(crs, crsGeo);
+//        double[] rez = t.TransformPoint(rez_x, rez_y);
+//
+//        System.out.println(new Double(rez[0]).toString() + " " +  new Double(rez[1]).toString());
+
+        CreateFloodMapBasedOnTOPO flood = new CreateFloodMapBasedOnTOPO(result_nif_path, nif_path, topo_path);
+
+
 
     }
 }

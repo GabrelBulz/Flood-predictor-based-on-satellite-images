@@ -1,9 +1,15 @@
-import com.sun.xml.internal.ws.api.addressing.WSEndpointReference;
+package java_classes;
+
+
+
+//import com.sun.xml.internal.ws.api.addressing.WSEndpointReference;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,16 +39,22 @@ public class WaterDerectorBasic {
             String nif_name = this.source_path + "\\" + Integer.toString(file_nr) + "_nif.tif";
             String green_name = this.source_path + "\\" + Integer.toString(file_nr) + "_green.tif";
 
+
             File nif_file = new File(nif_name);
             File green_file = new File(green_name);
+            FileInputStream file_nif = null;
+            try {
+                 file_nif = new FileInputStream(nif_file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
             BufferedImage nif_img = null;
             BufferedImage green_img = null;
 
 
-
             // open files
             try {
-                nif_img = ImageIO.read(nif_file);
+                nif_img = ImageIO.read(file_nif);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -53,6 +65,8 @@ public class WaterDerectorBasic {
             }
 
 
+
+            // Detect water based on NDWI formula IE green-gray/green+gray , water >=0.55
             if (nif_img != null && green_img != null){
                 for (int i = 0; i < nif_img.getWidth(); i++) {
                     for (int j = 0; j < nif_img.getHeight(); j++) {
@@ -80,11 +94,6 @@ public class WaterDerectorBasic {
                     e.printStackTrace();
                 }
             }
-
-
-
-
-
         }
     }
 
@@ -106,7 +115,8 @@ public class WaterDerectorBasic {
 
         }
 
-        System.out.println("Finish threads");
+
+        System.out.println("Finish WATERDETECT");
     }
 
 
