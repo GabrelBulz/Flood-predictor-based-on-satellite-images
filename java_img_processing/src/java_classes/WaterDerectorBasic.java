@@ -65,8 +65,10 @@ public class WaterDerectorBasic {
             }
 
 
-
-            // Detect water based on NDWI formula IE green-gray/green+gray , water >=0.55
+            /**
+             *  Detect water based on NDWI formula IE green-gray/green+gray , water >=0.55
+             *  Water are will have a white color and the rest will be black
+             */
             if (nif_img != null && green_img != null){
                 for (int i = 0; i < nif_img.getWidth(); i++) {
                     for (int j = 0; j < nif_img.getHeight(); j++) {
@@ -98,6 +100,15 @@ public class WaterDerectorBasic {
     }
 
     public WaterDerectorBasic(String source_path, int nr_of_files, String out_path){
+        /**
+         *  Start a thread pool for each set of files that will need to be processed
+         *  Currently it was set for 2 threads because the JVM has only 4 GB allocated,
+         *  and for a higher nr of threads more memory will be required
+         *
+         * @param source_path - path the the folder where user's images are stored
+         * @param nr_of_files - nr of sets
+         * @param out_path - path to the folder where images containing the water are stored
+         */
         this.source_path = source_path;
         this.out_path = out_path;
         this.nr_of_files = nr_of_files;

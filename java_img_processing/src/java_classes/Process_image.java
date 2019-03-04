@@ -17,47 +17,15 @@ import org.gdal.osr.SpatialReference;
 public class Process_image {
 
 
-     static class Thread_image implements Runnable{
-
-         private String image_name;
-         private int thread_nr;
-
-         public Thread_image(String img_name, int thread_nr){
-             this.image_name = img_name;
-             this.thread_nr = thread_nr;
-         }
-
-         @Override
-         public void run() {
-             java.io.File f = new File(this.image_name);
-             BufferedImage img = null;
-             try {
-                 img = ImageIO.read(f);
-             } catch (IOException e) {
-                 e.printStackTrace();
-             }
-
-
-
-             for (int i = 0; i < img.getWidth(); i++) {
-                 for (int j = 0; j < img.getHeight(); j++) {
-                     if ((new Color(img.getRGB(i, j))).getRed() <= 5)
-                         img.setRGB(i, j, new Color(255, 255, 255).getRGB());
-                     else
-                         img.setRGB(i, j, new Color(0, 0, 0).getRGB());
-                 }
-             }
-
-             try {
-                 ImageIO.write(img, "jpg", new File("modified" + Integer.toString(this.thread_nr) + ".jpg"));
-             } catch (IOException e) {
-                 e.printStackTrace();
-             }
-         }
-     }
-
-
     public static void main(String []args) throws IOException {
+        /**
+         * This will run a water detector algorithm over a set of files
+         * After the water is detected a flood algorithm based on topo will be applied
+         *
+         * @param - the params are passed through command line args
+         *          first param is the path to the file where the images are unziped
+         *          second param is the path to the file where the processed images will be stored
+         */
          String source_images = args[0];
          String out_processed_images = args[1];
          int nr_images = new File(source_images).listFiles().length / 3;

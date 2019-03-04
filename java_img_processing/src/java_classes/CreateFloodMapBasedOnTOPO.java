@@ -277,6 +277,15 @@ public class CreateFloodMapBasedOnTOPO {
 
 
     public CreateFloodMapBasedOnTOPO(String source_files_paht, String processed_files_path, int nr_sets){
+        /**
+         *  Start a thread pool for each set of files that will need to be processed
+         *  Currently it was set for 2 threads because the JVM has only 4 GB allocated,
+         *  and for a higher nr of threads more memory will be required
+         *
+         * @param source_files_paht - the folder where images are stored
+         * @param processed_files_path - the folder where the processed images will be stored
+         * @param nr_sets - nr of images sets that will be processed
+         */
 
 
         this.source_files_path = source_files_paht;
