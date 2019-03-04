@@ -7,6 +7,7 @@ import tarfile
 import random
 import subprocess
 import shutil
+import hashlib
 from subprocess import STDOUT, PIPE
 from email.message import EmailMessage
 
@@ -28,13 +29,15 @@ MAIL_SERVER = 'floodgenerator@gmail.com'
 MAIL_PASS = 'xxaumwtdntsucxkz'
 
 queue = None
+lock = None
+manageDB_results = None
 
 
 class QueueSolveThread(Thread):
     """
         Thread for processing the queue requests
     """
-    def __init__(self, queue):
+    def __init__(self, queue, lock, manageDB_results):
         """
             Constructor for Thread object
 
@@ -42,6 +45,8 @@ class QueueSolveThread(Thread):
         """
         Thread.__init__(self)
         self.queue = queue
+        self.lock = lock
+        self.manageDB_results = manageDB_results
 
     # def send_mail_request_complet(self, )
 
@@ -124,7 +129,6 @@ class QueueSolveThread(Thread):
             result_unzip_paht = self.unzip_file(item['file'])
             if result_unzip_paht != -1:
                 result_check_zip = self.check_unziped_folder(result_unzip_paht)
-                print('mue')
                 if result_check_zip != -1:
                     os.remove(item['file'])
 
@@ -150,16 +154,33 @@ class QueueSolveThread(Thread):
                     pass
                 boolean_ok_to_mail = False
 
-            zip_file_paht = None
+            zip_file_paht_hash = None
             if boolean_ok_to_mail:
                 path_result = os.path.join(result_unzip_paht, 'result')
                 zip_name = os.path.join(result_unzip_paht, 'results')
                 zip_file_paht = shutil.make_archive(zip_name, 'zip', path_result)
+                zip_file_paht_hash = hashlib.md5(zip_file_paht.encode())
+                zip_file_paht_hash = zip_file_paht_hash.hexdigest()
 
-            send_mail(boolean_ok_to_mail, item['email'], zip_file_paht)
+                try:
+                    self.lock.acquire()
+
+                    pack = {}
+                    pack['result_path'] = zip_file_paht
+                    pack['result_hash'] = zip_file_paht_hash
+                    self.manageDB_results.add_pack(pack)
+
+                finally:
+                    self.lock.release()
+
+            send_mail(boolean_ok_to_mail, item['email'], zip_file_paht_hash)
 
 
 def compile_java_files():
+    """
+        compile all java files that are used for image processing
+        and link all libs
+    """
     java_files = JAVA_FILES_PATH + '\\*java'
     java_libs = JAVA_LIBS_PATH + '\\*'
     subprocess.Popen(['javac', '-d', JAVA_OUT_COMPILED_CLASSES,
@@ -168,6 +189,13 @@ def compile_java_files():
 
 
 def process_files(path_files, result_directory):
+    """
+        run a java process that will solve the request
+        param : path_files - path to the folder where images have been unziped
+        param : result_directory
+        return : 1 - if the process have failed
+                 0 - if the process had succed
+    """
     java_libs = JAVA_LIBS_PATH + '\\*'
     compiled_libs_and_classes = JAVA_OUT_COMPILED_CLASSES + ';' + java_libs
     java_main_class = JAVA_PACKAGE_NAME + '.' + JAVA_MAIN_CLASS
@@ -206,7 +234,7 @@ def send_mail(result_process_images, send_mail_to_address, path):
     mail.starttls()
     mail.login(MAIL_SERVER, MAIL_PASS)
 
-    succed_mail_link = 'http://127.0.0.1:5000/download/?file=' + str(path)
+    succed_mail_link = 'http://127.0.0.1:5000/download?file_hash=' + str(path)
 
     succed_mail_content = ('Subject: Flood images processed results\n\n\
     Your images have been processed\n\
