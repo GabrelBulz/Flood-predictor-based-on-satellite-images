@@ -1,13 +1,11 @@
 import os
 import threading
-from flask import Flask, flash, request, redirect, url_for, render_template, after_this_request , send_file
-from flask import send_from_directory
-from werkzeug.utils import secure_filename
-from queue import Queue
-import ThreadQueueProcess
-import time
 import shutil
+import time
+from queue import Queue
+from flask import send_file, Flask, request, render_template
 from db_results import manageDB as manageDb_results
+import ThreadQueueProcess
 
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -15,7 +13,7 @@ ALLOWED_EXTENSIONS = set(['zip', 'rar', 'tar.gz', 'tar.bz2', 'tgz'])
 
 LOCK = threading.Lock()
 
-##start data base for users
+# start data base for users
 manageDb_results.initialize()
 manageDb_results.create_tables()
 
@@ -31,7 +29,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route('/uploader', methods = ['GET', 'POST'])
+@app.route('/uploader', methods=['GET', 'POST'])
 def index_route():
     target = os.path.join(APP_ROOT, 'uploads/')
 
@@ -42,7 +40,7 @@ def index_route():
 
     for file in request.files.getlist("file"):
         filename = file.filename
-        if(allowed_file(filename)):
+        if allowed_file(filename):
             destination = "/".join([target, filename])
             file.save(destination)
         else:
@@ -53,7 +51,7 @@ def index_route():
     queue_item['file'] = "uploads\\" + str(filename)
     queue.put(queue_item)
 
-    return render_template("complete.html", email_to_send = email)
+    return render_template("complete.html", email_to_send=email)
 
 
 @app.route('/')
@@ -83,19 +81,20 @@ def down():
             root_path = path[0: path[0:path.rfind('\\')].rfind('\\')]
 
             # wait 10 min until the file is deleted
-            time_sleep = 600
+            time_sleep = 10 * 60
 
             # if the file is bigger that 1 GB wait 1h
             if os.path.getsize(path) > 1200000000:
-                time_sleep = 3600
+                time_sleep = 1 * 60 * 60
 
-            th = threading.Thread(target = thread_delete, args = (root_path, time_sleep))
-            th.daemon = True
-            th.start()
+            thread_del = threading.Thread(target=thread_delete, args=(root_path, time_sleep))
+            thread_del.daemon = True
+            thread_del.start()
 
             return send_file(path, as_attachment=True, attachment_filename='result.zip')
 
     return render_template("file_not_found.html")
+
 
 def thread_delete(path, time_sleep):
     """
@@ -105,9 +104,9 @@ def thread_delete(path, time_sleep):
     param : time_sleep - untile the file path is deleted
     """
     time.sleep(time_sleep)
-    shutil.rmtree(path)
-
-
+    shutil.rmtree(path, ignore_errors=True)
+    print(path)
+    print(os.path.exists(path))
 
 
 if __name__ == '__main__':
